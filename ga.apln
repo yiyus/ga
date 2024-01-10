@@ -1,78 +1,78 @@
 :Namespace ga                              ⍝ Geometric Algebra
-    ⎕IO ← 0                                                               ⍝ important
-    ⎕CT ← 1e¯10                                                           ⍝ avoid rounding issues
-    Assert ← {⍺←'assertion failure' ⋄ 0∊⍵:⍺ ⎕signal 8 ⋄ shy←1}            ⍝ Assert by Roger Hui
+    ⎕IO←0                                                            ⍝ important
+    ⎕CT←1e¯10                                                        ⍝ avoid rounding issues
+    Assert←{⍺←'assertion failure' ⋄ 0∊⍵:⍺ ⎕signal 8 ⋄ shy←1}         ⍝ Assert by Roger Hui
 
     ⍝ vectors
-     M ← 0.5*⍨+.×⍨  ⋄   U ← ×∘(÷M)⍨   ⋄   I ← ×∘(÷+.×⍨)⍨                  ⍝ magnitude, unitary, inverse
-    AV ← ⊂⍤1↑[0]    ⋄  VA ← ⊂⍤¯1↑[0]  ⋄  BV ← 1↑⍨¨∘-1+⍳                   ⍝ array from vector, vector from array, base
+     M←0.5*⍨+.×⍨  ⋄   U←×∘(÷M)⍨   ⋄   I←×∘(÷+.×⍨)⍨                   ⍝ magnitude, unitary, inverse
+    AV←⊂⍤1↑[0]    ⋄  VA←⊂⍤¯1↑[0]  ⋄  BV←1↑⍨¨∘-1+⍳                    ⍝ array from vector, vector from array, base
 
     ⍝ vector extension
-     C ← {⍺←⎕CT ⋄ ⎕CT←⍺ ⋄ 1=≢∪⍵:⊃⍵ ⋄ ⍺∧.>|∊⍵:0 ⋄ ⍵}¨                      ⍝ collapse equal values
-     S ← {⍬≡⍵:0 ⋄ (1<≢⍵)∨(0<≡⍵)∧1<≢⊃⍵:⍵ ⋄ ⊃⍵}  ⋄  US ← ×∘(×/⍤=⍨)⍨         ⍝ scalar if possible and unscalar
-     Z ← {⍺←⎕CT ⋄ ⎕CT←⍺ ⋄ S⍵↓⍨-⊥⍨(1∧.=1+∊)¨⍵}  ⋄   E ← ≡⍥Z⍥C              ⍝ remove trailing zeros and equivalent
-     X ← {⍺←2*D⍵ ⋄ ⍺↑⍵,0⍴⍨0⌈⍺-≢⍵}  ⋄  _X ← {⍺←⊢ ⋄ ⍺(⍺⍺⍥((⍺⌈⍥≢⍵)∘X))⍵}     ⍝ extend and apply extending arguments
-    _V ← {⍺←⊢ ⋄ Z∘C ⍺(⍺⍺ _X)⍵}     ⋄  _Z ← {0≡⍺:0 ⋄ 0≡⍵:0 ⋄ ⍺(⍺⍺)⍵}       ⍝ apply vector extension or zero function
+     C←{⍺←⎕CT ⋄ ⎕CT←⍺ ⋄ 1=≢∪⍵:⊃⍵ ⋄ ⍺∧.>|∊⍵:0 ⋄ ⍵}¨                   ⍝ collapse equal values
+     S←{⍬≡⍵:0 ⋄ (1<≢⍵)∨(0<≡⍵)∧1<≢⊃⍵:⍵ ⋄ ⊃⍵}  ⋄  US←×∘(×/⍤=⍨)⍨        ⍝ scalar if possible and unscalar
+     Z←{⍺←⎕CT ⋄ ⎕CT←⍺ ⋄ S⍵↓⍨-⊥⍨(1∧.=1+∊)¨⍵}  ⋄   E←≡⍥Z⍥C             ⍝ remove trailing zeros and equivalent
+     X←{⍺←2*D⍵ ⋄ ⍺↑⍵,0⍴⍨0⌈⍺-≢⍵}  ⋄  _X←{⍺←⊢ ⋄ ⍺(⍺⍺⍥((⍺⌈⍥≢⍵)∘X))⍵}    ⍝ extend and apply extending arguments
+    _V←{⍺←⊢ ⋄ Z∘C ⍺(⍺⍺ _X)⍵}     ⋄  _Z←{0≡⍺:0 ⋄ 0≡⍵:0 ⋄ ⍺(⍺⍺)⍵}      ⍝ apply vector extension or zero function
 
     ⍝ multivectors
-     V ← {⍺←2*⍳≢⍵ ⋄ r←⍺⌊⍥⍴⍵ ⋄ v←0⍴⍨1+⌈/,a←r↑⍺ ⋄ v[a]+←r↑⍵ ⋄ v}            ⍝ multivector
-    BB ← ↓∘⍉2⊥⍣¯1⍳  ⋄  G ← {⌈/+/¨(0≢¨C ⍵)/BB≢⍵}  ⋄  D ← ⌈2⍟⌈⍥≢            ⍝ binary unitary base, grade and dimensions
-    GB ← {b←Z({⊂⊂⍵}⌸+/¨BB≢⍵)⌷¨⊂,⍵ ⋄ ⍺←⍳≢b ⋄ (⊂⍺)⌷(1+⌈/,⍺)X b}             ⍝ group in blades
+     V←{⍺←2*⍳≢⍵ ⋄ r←⍺⌊⍥⍴⍵ ⋄ v←0⍴⍨1+0⌈⌈/,a←r↑⍺ ⋄ v[a]+←r↑⍵ ⋄ v}       ⍝ multivector
+    BB←↓∘⍉2⊥⍣¯1⍳  ⋄  G←{⌈/+/¨(0≢¨C ⍵)/BB≢⍵}  ⋄  D←⌈2⍟⌈⍥≢             ⍝ binary unitary base, grade and dimensions
+    GB←{b←Z({⊂⊂⍵}⌸+/¨BB≢⍵)⌷¨⊂,⍵ ⋄ ⍺←⍳≢b ⋄ (⊂⍺)⌷(1+⌈/,⍺)X b}          ⍝ group in blades
 
     ⍝ product tables
-     PB ← 2⊥≠  ⋄  SB ← ¯1*(≠\¯1↓⊢)≠.∧1↓⊣  ⋄  MS ← ⊃1 ¯1 0,.⍴⍨⊢↑⍨3⌈≢       ⍝ position, sign and metric
-   _FM ← {⍺(SB×(⌽⍺⍺)×.*∧)⍵}  ⋄  TS ← {(∘.PB,⍥⊂∘.((MS⍵)_FM))⍨BB 2*+/⍵}     ⍝ factor from metric, tables from signature
-     TX ← TS 0 0,+/  ⋄  TI ← 0 0⍉∘⊃⌽∘TS  ⋄  TR ← SB⍨¨BB∘≢  ⋄  BT ← ⊃V¨/   ⍝ exterior, inner, reversion and base
+     PB←2⊥≠  ⋄  SB←¯1*(≠\¯1↓⊢)≠.∧1↓⊣  ⋄  MS←⊃1 ¯1 0,.⍴⍨⊢↑⍨3⌈≢        ⍝ position, sign and metric
+    _FM←{⍺(SB×(⌽⍺⍺)×.*∧)⍵}  ⋄  TS←{(∘.PB,⍥⊂∘.((MS⍵)_FM))⍨BB 2*+/⍵}   ⍝ factor from metric, tables from signature
+     TX←TS 0 0,+/  ⋄  TI←0 0⍉∘⊃⌽∘TS  ⋄  TR←SB⍨¨BB∘≢  ⋄  BT←⊃V¨/      ⍝ exterior, inner, reversion and base
 
     ⍝ geometric operators
-    _∆_  ← {p s←⍺(⍵⍵⍨⍨)⍵ ⋄ (r↑p)V(r↑s)×(r←(≢¨⍺⍵)⌊⍴p)↑⍺∘.⍺⍺⍥,⍵}            ⍝ geometric product
-    _∆I_ ← {0 V _X ⍺(⍵⍵×_X⍺⍺¨_X)⍵}        ⋄  _∆X_ ← {Z⍺(⍺⍺_∆_⍵⍵)⍵}        ⍝ inner and exterior product
-    _∆   ← _∆_(TS⍤D)  ⋄  _∆X ← _∆_(TX⍤D)  ⋄  _∆I ← _∆I_(TI⍤D)             ⍝ geometric, inner and exterior product
-    _⍙_  ← {⍵⍵ LC ⍺ ⍺⍺⍥((⍺(⍵⍵⍨⍨)⍵)∘RC)⍵}  ⋄  _⍙ ← _⍙_ D                   ⍝ antigeometric product
-    _I   ← {⍺←1 ⋄ Z∘C⍺ ⍺⍺ ⊂∘⍉⍤¯1⍉(↑∘1∘≢⌹⍤2(↑[-÷2]⍣2⊂⍺⍺¨BV∘≢))US⍵X⍨2*D⍵}   ⍝ inverse
-    _C   ← {⍺←D⍵ ⋄ (⌽×_V+/⍤⍺⍺¨∘⌽⍨∘BV∘≢)⍵ X⍨2*⍺}                           ⍝ complement
+    _∆_ ←{p s←⍺(⍵⍵⍨⍨)⍵ ⋄ (r↑p)V(r↑s)×(r←(≢¨⍺⍵)⌊⍴p)↑⍺∘.⍺⍺⍥,⍵}         ⍝ geometric product
+    _∆I_←{0 V _X ⍺(⍵⍵×_X⍺⍺¨_X)⍵}        ⋄  _∆X_←{Z⍺(⍺⍺_∆_⍵⍵)⍵}       ⍝ inner and exterior product
+    _∆  ←_∆_(TS⍤D)  ⋄  _∆X ← _∆_(TX⍤D)  ⋄  _∆I←_∆I_(TI⍤D)            ⍝ geometric, inner and exterior product
+    _⍙_ ←{⍵⍵ LC ⍺ ⍺⍺⍥((⍺(⍵⍵⍨⍨)⍵)∘RC)⍵}  ⋄  _⍙←_⍙_ D                  ⍝ antigeometric product
+    _I  ←{⍺←1 ⋄ Z∘C⍺ ⍺⍺⊂∘⍉⍤¯1⍉(↑∘1∘≢⌹⍤2(↑[-÷2]⍣2⊂⍺⍺¨BV∘≢))US⍵X⍨2*D⍵} ⍝ inverse
+    _C  ←{⍺←D⍵ ⋄ (⌽×_V+/⍤⍺⍺¨∘⌽⍨∘BV∘≢)⍵ X⍨2*⍺}                        ⍝ complement
 
     ⍝ geometric functions
-    ∆  ← ×_Z_∆  ⋄  ∆X ← ×_∆X   ⋄  ∆I ← ×_∆I                               ⍝ geometric, exterior and inner product
-    ⍙  ← ∆ _⍙   ⋄  ⍙X ← ∆X _⍙  ⋄  ⍙I ← ∆I _⍙                              ⍝ antigeometric, exterior and inner product
-    LC ← ∆ _C   ⋄  RC ← ∆⍨ _C  ⋄  DC ← LC⍣2                               ⍝ left, right and double complement
-    ∆∆ ← ∆ _I   ⋄  ⍙⍙ ← ⍙ _I   ⋄  R  ← ×∘TR⍨  ⋄  PS ← 1↑⍨∘-2*∘⌈2⍟≢        ⍝ inverse, antiinverse, reverse, pseudoscalar
+    ∆ ←×_Z_∆  ⋄  ∆X←×_∆X   ⋄  ∆I←×_∆I                                ⍝ geometric, exterior and inner product
+    ⍙ ←∆ _⍙   ⋄  ⍙X←∆X _⍙  ⋄  ⍙I←∆I _⍙                               ⍝ antigeometric, exterior and inner product
+    LC←∆ _C   ⋄  RC←∆⍨ _C  ⋄  DC←LC⍣2                                ⍝ left, right and double complement
+    ∆∆←∆ _I   ⋄  ⍙⍙←⍙ _I   ⋄  R ←×∘TR⍨  ⋄  PS←1↑⍨∘-2*∘⌈2⍟≢           ⍝ inverse, antiinverse, reverse, pseudoscalar
 
-    GA ← {                                                                ⍝ GEOMETRIC ALGEBRA
-        g ← ⎕NS⍬  ⋄  g.s g.b ← ⍵ (S BV 2*d←+/⍵)                           ⍝   namespace, signature, base
+    GA ← {                                                           ⍝ GEOMETRIC ALGEBRA
+        g←⎕NS⍬  ⋄  (g.s g.b)←⍵(S BV 2*d←+/⍵)                         ⍝   namespace, signature, base
         g._Z←_Z ⋄ g._X←_X ⋄ g.Z←Z ⋄ g.S←S ⋄ g.US←US ⋄ g.C←C
         g.V←V ⋄ g._V←_V ⋄ g.D←D ⋄ g.BV←BV ⋄ g._⍙←_⍙_ d
-        g._∆ ← _∆_(TS⍵)  ⋄  g._∆X ← _∆_(TX⍵)   ⋄  g._∆I ← _∆I_(TI⍵)       ⍝   geometric, exterior and inner operator
-        g.∆  ← ×g._∆     ⋄  g.∆X  ← ×g._∆X     ⋄  g.∆I  ← ×g._∆I          ⍝   products
-        g.∆V ← g.∆⍥V     ⋄  g.∆XV ← g.∆X⍥V     ⋄  g.∆IV ← g.∆I⍥V          ⍝   products of vectors
-        g.∆v ← g.∆∘V     ⋄  g.∆Xv ← g.∆X∘V     ⋄  g.∆Iv ← g.∆I∘V          ⍝   products by vector
-        g.⍙  ← g.∆ g._⍙  ⋄  g.⍙X  ← g.∆X g._⍙  ⋄  g.⍙I  ← g.∆I g._⍙       ⍝   antiproducts
-        g.∆∆ ← g.∆ _I    ⋄  g.∆∆V ← g.∆∆⍥V     ⋄  g.∆∆v ← g.∆∆∘V          ⍝   inverse and division
-        g.LC ← g.∆ _C    ⋄  g.RC  ← g.∆⍨_C     ⋄  g.DC  ← g.LC⍣2          ⍝   complements: left, right, double
-        g.R  ← ×∘(TR⍵)⍨  ⋄  g.X   ← X{⍺←≢b ⋄ ⍺(⍺⍺)⍵}  ⋄  g                ⍝   reverse and extend
+        g._∆←_∆_(TS⍵)  ⋄  g._∆X←_∆_(TX⍵)   ⋄  g._∆I←_∆I_(TI⍵)        ⍝   geometric, exterior and inner operator
+        g.∆ ←×g._∆     ⋄  g.∆X ←×g._∆X     ⋄  g.∆I ←×g._∆I           ⍝   products
+        g.∆V←g.∆⍥V     ⋄  g.∆XV←g.∆X⍥V     ⋄  g.∆IV←g.∆I⍥V           ⍝   products of vectors
+        g.∆v←g.∆∘V     ⋄  g.∆Xv←g.∆X∘V     ⋄  g.∆Iv←g.∆I∘V           ⍝   products by vector
+        g.⍙ ←g.∆ g._⍙  ⋄  g.⍙X ←g.∆X g._⍙  ⋄  g.⍙I ←g.∆I g._⍙        ⍝   antiproducts
+        g.∆∆←g.∆ _I    ⋄  g.∆∆V←g.∆∆⍥V     ⋄  g.∆∆v←g.∆∆∘V           ⍝   inverse and division
+        g.LC←g.∆ _C    ⋄  g.RC ←g.∆⍨_C     ⋄  g.DC ←g.LC⍣2           ⍝   complements: left, right, double
+        g.R ←×∘(TR⍵)⍨  ⋄  g.X  ←X{⍺←≢b ⋄ ⍺(⍺⍺)⍵}  ⋄  g               ⍝   reverse and extend
     }
 
-    g0 g1 g2 g3 c q pga ← GA¨(⍳4),(0 1) (0 2) (3 0 1)                     ⍝ 0-3D, complex, quaternions, pga
+    (g0 g1 g2 g3 c q pga)←GA¨(⍳4),(0 1) (0 2) (3 0 1)                ⍝ 0-3D, complex, quaternions, pga
     
-    VS ← {                                                                ⍝ Vector Space
-        _ ← Assert (⊂⍬) ∧.≡ ⍴¨ a b ← ⍺                                    ⍝   a and b are scalars
-        _ ← Assert (⊂,1) ∧.≥ ⍴∘⍴¨ u v w ← ⍵                               ⍝   u, v and w are vectors (rank 1)
-        _ ← Assert v               E v + 0                                ⍝   identity element for addition
-        _ ← Assert v               E 1 × v                                ⍝   identity element for multiplication
-        _ ← Assert 0               E v +_V -v                             ⍝   inverse element for addition
-        _ ← Assert (v +_V w)       E w +_V v                              ⍝   commutative addition
-        _ ← Assert (a × v)         E v × a                                ⍝   commutative product with scalars
-        _ ← Assert (u +_V v +_V w) E w +_V u +_V v                        ⍝   associative addition
-        _ ← Assert (v × a × b)     E (v × a) × b                          ⍝   associative product with scalars
-        _ ← Assert (a × v +_V w)   E v +_V⍥(a∘×) w                        ⍝   distributive over addition of vectors
-            Assert (v × a + b)     E a +_V⍥(v∘×) b                        ⍝   distributive over addition of scalars
+    VS←{                                                             ⍝ Vector Space
+        _←Assert (⊂⍬) ∧.≡ ⍴¨(a b)←⍺                                  ⍝   a and b are scalars
+        _←Assert (⊂,1) ∧.≥ ⍴∘⍴¨(u v w)←⍵                             ⍝   u, v and w are vectors (rank 1)
+        _←Assert v               E v + 0                             ⍝   identity element for addition
+        _←Assert v               E 1 × v                             ⍝   identity element for multiplication
+        _←Assert 0               E v +_V -v                          ⍝   inverse element for addition
+        _←Assert (v +_V w)       E w +_V v                           ⍝   commutative addition
+        _←Assert (a × v)         E v × a                             ⍝   commutative product with scalars
+        _←Assert (u +_V v +_V w) E w +_V u +_V v                     ⍝   associative addition
+        _←Assert (v × a × b)     E (v × a) × b                       ⍝   associative product with scalars
+        _←Assert (a × v +_V w)   E v +_V⍥(a∘×) w                     ⍝   distributive over addition of vectors
+          Assert (v × a + b)     E a +_V⍥(v∘×) b                     ⍝   distributive over addition of scalars
     }
-    _GA ← {                                                               ⍝ Geometric Algebra (geometric product ⍺⍺)
-        _ ← Assert (a b ← ⍺)        VS (u v w ← ⍵)                        ⍝   vector space: a b scalars, u v w vectors
-        _ ← Assert (u ⍺⍺ v ⍺⍺ w)    E w ⍺⍺⍨ u ⍺⍺ v                        ⍝   associative product
-        _ ← Assert (u∘⍺⍺ ⊃+_V/ v w) E (⊃+_V/ u∘⍺⍺¨ v w)                   ⍝   distributive by left
-        _ ← Assert (⍺⍺∘u ⊃+_V/ v w) E (⊃+_V/ ⍺⍺∘u¨ v w)                   ⍝   distributive by right
-        _ ← Assert (a ⍺⍺ v ⍺⍺ b)    E a × b × v                           ⍝   extension of scalar product
-            Assert (⊢E⍬⍴⊢)∘(⍺⍺⍨)¨   V¨BV⌈/D¨⍵                             ⍝   scalar product of parallel vectors
+    _GA←{                                                            ⍝ Geometric Algebra (geometric product ⍺⍺)
+        _←Assert (a b←⍺)         VS (u v w←⍵)                        ⍝   vector space: a b scalars, u v w vectors
+        _←Assert (u ⍺⍺ v ⍺⍺ w)    E w ⍺⍺⍨ u ⍺⍺ v                     ⍝   associative product
+        _←Assert (u∘⍺⍺ ⊃+_V/ v w) E (⊃+_V/ u∘⍺⍺¨ v w)                ⍝   distributive by left
+        _←Assert (⍺⍺∘u ⊃+_V/ v w) E (⊃+_V/ ⍺⍺∘u¨ v w)                ⍝   distributive by right
+        _←Assert (a ⍺⍺ v ⍺⍺ b)    E a × b × v                        ⍝   extension of scalar product
+          Assert (⊢E⍬⍴⊢)∘(⍺⍺⍨)¨   V¨BV⌈/D¨⍵                          ⍝   scalar product of parallel vectors
     }
-:EndNamespace                                                             ⍝ jgl@dyalog.com 2024
+:EndNamespace                                                        ⍝ jgl@dyalog.com 2024
